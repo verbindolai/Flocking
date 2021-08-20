@@ -54,7 +54,10 @@ class Particle {
 
         let particlesInRange = 0;
 
-        for (const particle of PARTICLES) {
+        for (const particle of PARTICLES[Math.floor(this.position.x / chunkSize)][Math.floor(this.position.y / chunkSize)]) {
+            if (!particle) {
+                return;
+            }
             const distance = this.position.dist(particle.position);
 
             if (distance > 0 && distance < EVASION_RANGE) {
@@ -90,7 +93,15 @@ class Particle {
 
         this.velocity.add(this.acceleration);
         this.velocity.limit(4);
+
+        const POS = PARTICLES[Math.floor(this.position.x / chunkSize)][Math.floor(this.position.y / chunkSize)];
+        POS.splice(POS.indexOf(this), 1);
+
         this.position.add(this.velocity);
+
+        PARTICLES[Math.floor(this.position.x / chunkSize)][Math.floor(this.position.y / chunkSize)] = this;
+
+
 
         if (this.position.x > WIDTH) {
             this.position.x = 0;
